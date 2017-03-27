@@ -7,16 +7,16 @@ import tensorflow as tf
 x_data = [1, 2, 3]
 y_data = [1, 2, 3]
 
-W = tf.Variable(tf.random_uniform([1], -1.0, 1.0))
-b = tf.Variable(tf.random_uniform([1], -1.0, 1.0))
+W = tf.Variable(tf.random_uniform([1], -1.0, 1.0), name="is_W")
+b = tf.Variable(tf.random_uniform([1], -1.0, 1.0), name="is_b")
 
-X = tf.placeholder(tf.float32, name="X")
-Y = tf.placeholder(tf.float32, name="Y")
+X = tf.placeholder(tf.float32, name="is_X")
+Y = tf.placeholder(tf.float32, name="is_Y")
 
 # X 와 Y 의 상관 관계를 분석하기 위한 가설 수식을 작성합니다.
 # h = W * X + b
 # W 와 X 가 행열이 아니므로 tf.matmul 이 아니라 tf.mul 을 사용했습니다.
-hypothesis = tf.add(tf.mul(W, X), b)
+hypothesis = tf.add(tf.multiply(W, X, name="is_mul"), b, name="is_add")
 
 # 손실 함수를 작성합니다.
 # mean(h - Y)^2 : 예측값과 실제값의 거리를 비용(손실) 함수로 정합니다.
@@ -26,16 +26,21 @@ optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.1)
 # 비용을 최소화 하는 것이 최종 목표
 train_op = optimizer.minimize(cost)
 
+cost_sum = tf.summary.scalar("cost",cost)
+#tf.reset_default_graph()
 # 세션을 생성하고 초기화합니다.
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
-
+    
+    merged = tf.summary.merge_all()
+    writer =tf.summary.FileWriter("/home/adioshun/board/1", sess.graph) 
     # 최적화를 100번 수행합니다.
     for step in xrange(100):
         # sess.run 을 통해 train_op 와 cost 그래프를 계산합니다.
         # 이 때, 가설 수식에 넣어야 할 실제값을 feed_dict 을 통해 전달합니다.
-        _, cost_val = sess.run([train_op, cost], feed_dict={X: x_data, Y: y_data})
-
+        #_, cost_val = sess.run([train_op, cost], feed_dict={X: x_data, Y: y_data})
+        summary, _, cost_val = sess.run([merged, train_op, cost], feed_dict={X: x_data, Y: y_data})
+        writer.add_summary(summary,step) 
         print step, cost_val, sess.run(W), sess.run(b)
 
     print "\n=== Test ==="

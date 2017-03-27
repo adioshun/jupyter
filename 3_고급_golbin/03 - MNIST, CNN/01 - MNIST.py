@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # 머신러닝 학습의 Hello World 와 같은 MNIST(손글씨 숫자 인식) 문제를 신경망으로 풀어봅니다.
-
+import os
+os.chdir('/home/adioshun/datasets')
 import tensorflow as tf
 
 from tensorflow.examples.tutorials.mnist import input_data

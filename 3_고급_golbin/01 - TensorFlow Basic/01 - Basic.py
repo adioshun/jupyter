@@ -33,6 +33,12 @@ sess = tf.Session()
 # 최초에 tf.global_variables_initializer 를 한 번 실행해야 합니다.
 sess.run(tf.global_variables_initializer())
 
+
+merged = tf.summary.merge_all()
+writer =tf.summary.FileWriter("/home/adioshun/board/1", sess.graph) 
+
+summary = sess.run(merged)
+writer.add_summary(summary) # x좌표값을 위해 Step같이 표기
 # 위에서 변수와 수식들을 정의했지만, 실행이 정의한 시점에서 실행되는 것은 아닙니다.
 # 다음처럼 sess.run 함수를 사용하면 그 때 계산이 됩니다.
 # 따라서 모델을 구성하는 것과, 실행하는 것을 분리하여 프로그램을 깔끔하게 작성할 수 있습니다.
